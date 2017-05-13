@@ -80,8 +80,8 @@ public class SpamLord {
     }
 
     private String
-            dotSeparator = "((\\.)|(\\sdot\\s)|(\\sdt\\s)|(;)|(\\sDOM\\s))",
-            name = "(&lt;)?(?<name>(\\w+" + dotSeparator + "?){1,2})" + "(?![Ss]erver)(?<![Ss]erver)",
+            dotSeparator = "((\\.)|(\\s(do?[tm])\\s)|(;))",
+            name = "(&lt;)?(?<name>(\\w+" + dotSeparator + "?){1,2})" + "(?!server)(?<!server)",
             atSign = "((@)" + "|" + "(\\s@\\s)" + "|" + "(\\(at\\))" + "|" + "(\\sat\\s)" + "|" + "(\\sWHERE\\s))",
             host = "(?<host>(\\w+" + dotSeparator + "+){1,2})",
             domain = "(?<domain>\\w{2,3})";
@@ -93,7 +93,7 @@ public class SpamLord {
     private Pattern eMailPt, phonePt;
 
     public SpamLord() {
-        eMailPt = Pattern.compile(name + atSign + host + domain);
+        eMailPt = Pattern.compile(name + atSign + host + domain, Pattern.CASE_INSENSITIVE);
         System.out.println(eMailPt);
         phonePt = Pattern.compile(phone3d1 + phoneSep + phone3d2 + phoneSep + phone4d);
         System.out.println(phonePt);
