@@ -17,7 +17,6 @@ public class LaplaceBigramLanguageModel implements LanguageModel {
         // TODO: your code here
     }
 
-
     /**
      * Takes a list of strings as argument and returns the log-probability of the
      * sentence using your language model. Use whatever data you computed in train() here.
