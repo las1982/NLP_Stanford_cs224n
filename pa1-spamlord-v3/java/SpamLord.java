@@ -82,8 +82,8 @@ public class SpamLord {
     private String
             dotSeparator = "((\\.)|(\\sdot\\s)|(\\sdt\\s)|(;))",
             name = "(&lt;)?(?<name>(\\w+" + dotSeparator + "?){1,2})" + "(?![Ss]erver)(?<![Ss]erver)",
-            host = "(?<host>(\\w+" + dotSeparator + "+){1,2})",
             atSign = "((@)" + "|" + "(\\s@\\s)" + "|" + "(\\(at\\))" + "|" + "(\\sat\\s))",
+            host = "(?<host>(\\w+" + dotSeparator + "+){1,2})",
             domain = "(?<domain>\\w{2,3})";
     private String
             phoneSep = "(([-\\s])" + "|" + "(\\)\\s?))",
