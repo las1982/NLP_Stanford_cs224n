@@ -80,9 +80,9 @@ public class SpamLord {
     }
 
     private String
-            dotSeparator = "((\\.)|(\\sdot\\s)|(\\sdt\\s)|(;))",
+            dotSeparator = "((\\.)|(\\sdot\\s)|(\\sdt\\s)|(;)|(\\sDOM\\s))",
             name = "(&lt;)?(?<name>(\\w+" + dotSeparator + "?){1,2})" + "(?![Ss]erver)(?<![Ss]erver)",
-            atSign = "((@)" + "|" + "(\\s@\\s)" + "|" + "(\\(at\\))" + "|" + "(\\sat\\s))",
+            atSign = "((@)" + "|" + "(\\s@\\s)" + "|" + "(\\(at\\))" + "|" + "(\\sat\\s)" + "|" + "(\\sWHERE\\s))",
             host = "(?<host>(\\w+" + dotSeparator + "+){1,2})",
             domain = "(?<domain>\\w{2,3})";
     private String
