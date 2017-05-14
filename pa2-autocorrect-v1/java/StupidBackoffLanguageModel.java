@@ -70,20 +70,19 @@ public class StupidBackoffLanguageModel implements LanguageModel {
         // we show the 'for' loop for insructive purposes.
         return score;
     }
-    public static void main(String[] args){
-        String trainPath = "F:\\1_Documents\\1 САША\\15_NLP (Stanford_cs224n)\\pa2-autocorrect-v1\\data\\holbrook-tagged-train.dat";
+
+    public static void main(String[] args) {
+        String trainPath = "pa2-autocorrect-v1\\data\\holbrook-tagged-train.dat";
         HolbrookCorpus trainingCorpus = new HolbrookCorpus(trainPath);
 
-        String devPath = "F:\\1_Documents\\1 САША\\15_NLP (Stanford_cs224n)\\pa2-autocorrect-v1\\data\\holbrook-tagged-dev.dat";
+        String devPath = "pa2-autocorrect-v1\\data\\holbrook-tagged-dev.dat";
         HolbrookCorpus devCorpus = new HolbrookCorpus(devPath);
-        String fileName = "F:\\1_Documents\\1 САША\\15_NLP (Stanford_cs224n)\\pa2-autocorrect-v1\\data\\count_1edit.txt";
+        String fileName = "pa2-autocorrect-v1\\data\\count_1edit.txt";
 
         System.out.println("Stupid Backoff Language Model: ");
         StupidBackoffLanguageModel sbLM = new StupidBackoffLanguageModel(trainingCorpus);
         SpellCorrect sbSpell = new SpellCorrect(sbLM, trainingCorpus, fileName);
         SpellingResult sbOutcome = sbSpell.evaluate(devCorpus);
         System.out.println(sbOutcome.toString());
-
-
     }
 }

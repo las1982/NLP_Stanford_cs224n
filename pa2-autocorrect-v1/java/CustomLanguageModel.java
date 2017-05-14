@@ -27,12 +27,12 @@ public class CustomLanguageModel implements LanguageModel {
     }
 
     public static void main(String[] args) {
-        String trainPath = "F:\\1_Documents\\1 САША\\15_NLP (Stanford_cs224n)\\pa2-autocorrect-v1\\data\\holbrook-tagged-train.dat";
+        String trainPath = "pa2-autocorrect-v1\\data\\holbrook-tagged-train.dat";
         HolbrookCorpus trainingCorpus = new HolbrookCorpus(trainPath);
 
-        String devPath = "F:\\1_Documents\\1 САША\\15_NLP (Stanford_cs224n)\\pa2-autocorrect-v1\\data\\holbrook-tagged-dev.dat";
+        String devPath = "pa2-autocorrect-v1\\data\\holbrook-tagged-dev.dat";
         HolbrookCorpus devCorpus = new HolbrookCorpus(devPath);
-        String fileName = "F:\\1_Documents\\1 САША\\15_NLP (Stanford_cs224n)\\pa2-autocorrect-v1\\data\\count_1edit.txt";
+        String fileName = "pa2-autocorrect-v1\\data\\count_1edit.txt";
 
         System.out.println("Custom Language Model: ");
         CustomLanguageModel customLM = new CustomLanguageModel(trainingCorpus);
