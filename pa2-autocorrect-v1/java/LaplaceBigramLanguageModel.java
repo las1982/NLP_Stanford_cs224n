@@ -6,10 +6,13 @@ public class LaplaceBigramLanguageModel implements LanguageModel {
      * Initialize your data structures in the constructor.
      */
     protected Map<String, Integer> words; // set of words that occur in training
+    protected Map<ArrayList<String>, Integer> biWords; // set of words that occur in training
     protected int wordsSize;
+    protected int biWordsSize;
 
     public LaplaceBigramLanguageModel(HolbrookCorpus corpus) {
         words = new HashMap<>();
+        biWords = new HashMap<>();
         train(corpus);
     }
 
@@ -26,9 +29,20 @@ public class LaplaceBigramLanguageModel implements LanguageModel {
                     words.replace(word, words.get(word) + 1);
                 } else words.put(word, 2);
             }
+            for (int i = 0; i < sentence.size() - 1; i++) { // iterate over words
+                ArrayList<String> biWords = new ArrayList<>();
+                biWords.add(sentence.get(i).getWord());
+                biWords.add(sentence.get(i + 1).getWord());
+                if (this.biWords.containsKey(biWords)) {
+                    this.biWords.replace(biWords, this.biWords.get(biWords) + 1);
+                } else this.biWords.put(biWords, 2);
+            }
         }
         for (int i : words.values()) {
             wordsSize += i;
+        }
+        for (int i : biWords.values()) {
+            biWordsSize += i;
         }
     }
 
@@ -39,11 +53,18 @@ public class LaplaceBigramLanguageModel implements LanguageModel {
     public double score(List<String> sentence) {
         // TODO: your code here
         double score = 0.0;
-//        double probability = Math.log(1.0 / words.size()); // uniform log-probability of log(1/V)
         int wordCount;
-        for (String word : sentence) { // iterate over words in the sentence
-            wordCount = words.get(word) == null ? 1 : words.get(word);
-            score += Math.log((double) wordCount / (double) wordsSize);
+        int biWordCount;
+        for (int i = 0; i < sentence.size() - 1; i++) { // iterate over words in the sentence
+            String word1 = sentence.get(i);
+            String word2 = sentence.get(i + 1);
+            ArrayList<String> biWords = new ArrayList<>();
+            biWords.add(word1);
+            biWords.add(word2);
+            wordCount = this.words.get(word1) == null ? 1 : words.get(word1);
+            biWordCount = this.biWords.get(biWords) == null ? 1 : this.biWords.get(biWords);
+
+            score += Math.log((double) biWordCount / (double) wordCount);
         }
         // NOTE: a simpler method would be just score = sentence.size() * - Math.log(words.size()).
         // we show the 'for' loop for insructive purposes.
