@@ -26,4 +26,18 @@ public class CustomLanguageModel implements LanguageModel {
         return 0.0;
     }
 
+    public static void main(String[] args) {
+        String trainPath = "F:\\1_Documents\\1 САША\\15_NLP (Stanford_cs224n)\\pa2-autocorrect-v1\\data\\holbrook-tagged-train.dat";
+        HolbrookCorpus trainingCorpus = new HolbrookCorpus(trainPath);
+
+        String devPath = "F:\\1_Documents\\1 САША\\15_NLP (Stanford_cs224n)\\pa2-autocorrect-v1\\data\\holbrook-tagged-dev.dat";
+        HolbrookCorpus devCorpus = new HolbrookCorpus(devPath);
+        String fileName = "F:\\1_Documents\\1 САША\\15_NLP (Stanford_cs224n)\\pa2-autocorrect-v1\\data\\count_1edit.txt";
+
+        System.out.println("Custom Language Model: ");
+        CustomLanguageModel customLM = new CustomLanguageModel(trainingCorpus);
+        SpellCorrect customSpell = new SpellCorrect(customLM, trainingCorpus, fileName);
+        SpellingResult customOutcome = customSpell.evaluate(devCorpus);
+        System.out.println(customOutcome.toString());
+    }
 }

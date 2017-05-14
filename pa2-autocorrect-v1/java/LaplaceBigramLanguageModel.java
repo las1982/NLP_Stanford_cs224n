@@ -35,7 +35,7 @@ public class LaplaceBigramLanguageModel implements LanguageModel {
                 biWords.add(sentence.get(i + 1).getWord());
                 if (this.biWords.containsKey(biWords)) {
                     this.biWords.replace(biWords, this.biWords.get(biWords) + 1);
-                } else this.biWords.put(biWords, 2);
+                } else this.biWords.put(biWords, 1);
             }
         }
         for (int i : words.values()) {
@@ -53,7 +53,7 @@ public class LaplaceBigramLanguageModel implements LanguageModel {
     public double score(List<String> sentence) {
         // TODO: your code here
         double score = 0.0;
-        int wordCount;
+        int word1Count;
         int biWordCount;
         for (int i = 0; i < sentence.size() - 1; i++) { // iterate over words in the sentence
             String word1 = sentence.get(i);
@@ -61,13 +61,28 @@ public class LaplaceBigramLanguageModel implements LanguageModel {
             ArrayList<String> biWords = new ArrayList<>();
             biWords.add(word1);
             biWords.add(word2);
-            wordCount = this.words.get(word1) == null ? 1 : words.get(word1);
-            biWordCount = this.biWords.get(biWords) == null ? 1 : this.biWords.get(biWords);
+            word1Count = this.words.get(word1) == null ? 1 : words.get(word1);
+            biWordCount = this.biWords.get(biWords) == null ? 0 : this.biWords.get(biWords);
 
-            score += Math.log((double) biWordCount / (double) wordCount);
+            score += Math.log(((double) biWordCount + 1.0) / ((double) word1Count + (double) wordsSize)); // wordsSize - our V
         }
         // NOTE: a simpler method would be just score = sentence.size() * - Math.log(words.size()).
         // we show the 'for' loop for insructive purposes.
         return score;
+    }
+    public static void main(String[] args){
+        String trainPath = "F:\\1_Documents\\1 САША\\15_NLP (Stanford_cs224n)\\pa2-autocorrect-v1\\data\\holbrook-tagged-train.dat";
+        HolbrookCorpus trainingCorpus = new HolbrookCorpus(trainPath);
+
+        String devPath = "F:\\1_Documents\\1 САША\\15_NLP (Stanford_cs224n)\\pa2-autocorrect-v1\\data\\holbrook-tagged-dev.dat";
+        HolbrookCorpus devCorpus = new HolbrookCorpus(devPath);
+        String fileName = "F:\\1_Documents\\1 САША\\15_NLP (Stanford_cs224n)\\pa2-autocorrect-v1\\data\\count_1edit.txt";
+
+        System.out.println("Laplace Bigram Language Model: ");
+        LaplaceBigramLanguageModel laplaceBigramLM = new LaplaceBigramLanguageModel(trainingCorpus);
+        SpellCorrect laplaceBigramSpell = new SpellCorrect(laplaceBigramLM, trainingCorpus, fileName);
+        SpellingResult laplaceBigramOutcome = laplaceBigramSpell.evaluate(devCorpus);
+        System.out.println(laplaceBigramOutcome.toString());
+
     }
 }

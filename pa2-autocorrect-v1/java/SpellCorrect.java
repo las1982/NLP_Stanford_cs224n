@@ -17,6 +17,11 @@ public class SpellCorrect {
     languageModel = lm;
   }
 
+  public SpellCorrect(LanguageModel lm, HolbrookCorpus corpus, String fileName) {
+    editModel = new EditModel(fileName, corpus);
+    languageModel = lm;
+  }
+
   /** corrects a whole corpus, returns a JSON representation of the output. */
   String correctCorpus(HolbrookCorpus corpus, int partId) {
     StringBuilder sb = new StringBuilder();
