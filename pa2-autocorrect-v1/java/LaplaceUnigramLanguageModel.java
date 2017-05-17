@@ -24,7 +24,7 @@ public class LaplaceUnigramLanguageModel implements LanguageModel {
                 String word = datum.getWord(); // get the actual word
                 if (words.containsKey(word)) {
                     words.replace(word, words.get(word) + 1);
-                } else words.put(word, 2);
+                } else words.put(word, 1);
             }
         }
         for (int i : words.values()) {
@@ -42,8 +42,8 @@ public class LaplaceUnigramLanguageModel implements LanguageModel {
 //        double probability = Math.log(1.0 / words.size()); // uniform log-probability of log(1/V)
         int wordCount;
         for (String word : sentence) { // iterate over words in the sentence
-            wordCount = words.get(word) == null ? 1 : words.get(word);
-            score += Math.log((double) wordCount / (double) wordsSize);
+            wordCount = words.get(word) == null ? 0 : words.get(word);
+            score += Math.log(((double) wordCount + 1) / ((double) wordsSize + words.size()));
         }
         // NOTE: a simpler method would be just score = sentence.size() * - Math.log(words.size()).
         // we show the 'for' loop for insructive purposes.
