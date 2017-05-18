@@ -18,14 +18,40 @@ public class NaiveBayes {
 
     public static boolean FILTER_STOP_WORDS = false; // this gets set in main()
     private static List<String> stopList = readFile(new File("english.stop"));
-    //    vocabulary = {word : [numPos, numNeg]}
-    private Map<String, int[]> vocabulary = new HashMap<>();
-    private int numPosWords = 0;
-    private int numNegWords = 0;
-    private double numPosDocs = 0;
-    private double numNegDocs = 0;
-    private double posVocab = 0;
-    private double negVocab = 0;
+    private String[] klasses = new String[]{"pos", "neg"};
+    private Map<String, Integer>
+            countDocs = new HashMap<>(), // by klass
+            countDistinctWords = new HashMap<>(), // by klass
+            countWords = new HashMap<>(); // by klass
+    private Map<String, Map<String, Integer>> vocab = new HashMap<>(); // all words by klass
+    private int
+            v,
+            totalDocs;
+
+    public NaiveBayes() {
+        fillMapByKlassesWithZerros(countDocs);
+        fillMapByKlassesWithZerros(countDistinctWords);
+        fillMapByKlassesWithZerros(countWords);
+    }
+
+    private Map<String, Integer> fillMapByKlassesWithZerros(Map<String, Integer> map) {
+        for (String klass : klasses) {
+            map.put(klass, 0);
+        }
+        return map;
+    }
+
+    private void putWord(String word, String klass) {
+        countDistinctWords.replace(klass, countDistinctWords.get(klass) + 1);
+        vocab.put(word, fillMapByKlassesWithZerros(new HashMap<String, Integer>()));
+        updateWord(word, klass);
+    }
+
+    private void updateWord(String word, String klass) {
+        Map<String, Integer> updatedKlasses = vocab.get(word);
+        updatedKlasses.replace(klass, vocab.get(word).get(klass) + 1);
+        vocab.replace(word, updatedKlasses);
+    }
 
     //TODO
 
@@ -33,16 +59,14 @@ public class NaiveBayes {
      * Put your code for adding information to your NB classifier here
      **/
     public void addExample(String klass, List<String> words) {
-        if (klass.equals("pos")) numPosDocs++;
-        else numNegDocs++;
+        countDocs.replace(klass, countDocs.get(klass) + 1);
         for (String word : words) {
-            int newNumPos = vocabulary.getOrDefault(word, new int[]{0, 0})[0];
-            int newNumNeg = vocabulary.getOrDefault(word, new int[]{0, 0})[1];
-            if (klass.equals("pos")) newNumPos++;
-            else newNumNeg++;
-            if (vocabulary.containsKey(word)) vocabulary.replace(word, new int[]{newNumPos, newNumNeg});
-            else vocabulary.put(word, new int[]{newNumPos, newNumNeg});
+            countWords.replace(klass, countWords.get(klass) + 1);
+            if (vocab.containsKey(word)) this.updateWord(word, klass);
+            else putWord(word, klass);
         }
+        v = countDistinctWords.get("pos") + countDistinctWords.get("neg");
+        totalDocs = countDocs.get("pos") + countDocs.get("neg");
     }
 
     //TODO
@@ -52,34 +76,22 @@ public class NaiveBayes {
      * Currently, it just randomly chooses "pos" or "negative"
      */
     public String classify(List<String> words) {
-        for (String word : vocabulary.keySet()) {
-            numPosWords += vocabulary.get(word)[0];
-            if (vocabulary.get(word)[0] != 0) posVocab++;
-            numNegWords += vocabulary.get(word)[1];
-            if (vocabulary.get(word)[1] != 0) negVocab++;
+        Map<String, Double> prob = new HashMap<>();
+        for (String klass : klasses) {
+            prob.put(klass, 0.0);
+            double docsInKlass = countDocs.get(klass);
+            prob.replace(klass, Math.log(docsInKlass / totalDocs));
+            for (String word : words) {
+                double countThisWordInKlass = vocab.getOrDefault(word, new HashMap<>()).getOrDefault(klass, 0);
+                double additionalProb = Math.log((countThisWordInKlass + 1) / (countWords.get(klass) + v));
+                prob.replace(klass, prob.get(klass) + additionalProb);
+            }
         }
-        double probC1 = Math.log(numPosDocs / (numPosDocs + numNegDocs));
-        double probC2 = Math.log(numNegDocs / (numPosDocs + numNegDocs));
-        for (String word : words) {
-            double numWordsInC1 = vocabulary.getOrDefault(word, new int[]{0, 0})[0];
-            double numWordsInC2 = vocabulary.getOrDefault(word, new int[]{0, 0})[1];
-//            probC1 += Math.log((numWordsInC1 + 1) / (numPosWords + posVocab));
-            probC1 += Math.log((numWordsInC1 + 1) / (numPosWords + vocabulary.size()));
-//            System.out.println(numWordsInC1 + " " + numPosWords + " " + posVocab);
-//            probC2 += Math.log((numWordsInC2 + 1) / (numNegWords + negVocab));
-            probC2 += Math.log((numWordsInC2 + 1) / (numNegWords + vocabulary.size()));
-        }
-//        System.out.println(probC1 + " " + probC2);
-        if (probC1 >= probC2) {
+        if (prob.get("pos") > prob.get("neg")) {
             return "pos";
         } else {
             return "neg";
         }
-//        if(new Random().nextDouble() < 0.5) {
-//            return "pos";
-//        } else {
-//            return "neg";
-//        }
     }
 
 
